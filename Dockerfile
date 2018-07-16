@@ -7,7 +7,5 @@ FROM alpine:latest
 RUN apk --no-cache add ca-certificates
 WORKDIR /root/
 COPY --from=0 /go/src/github.com/fanminshi/simple-server/server .
-COPY server.key server.key
-COPY server.crt server.crt
 COPY src src
 CMD ["./server"] 
