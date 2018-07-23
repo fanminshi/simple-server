@@ -1,6 +1,7 @@
 package main
 
 import (
+	"crypto/tls"
 	"log"
 	"net/http"
 	"os"
@@ -20,8 +21,17 @@ func main() {
 	if !ok {
 		log.Fatalln("env CERT not found")
 	}
-
 	log.Println("Ready to serve request")
 	http.Handle("/", http.FileServer(http.Dir("./src")))
-	log.Fatal(http.ListenAndServeTLS(":443", cert, key, nil))
+
+	// Setup HTTPS client
+	tlsConfig := &tls.Config{
+		ClientAuth: tls.RequireAndVerifyClientCert,
+	}
+	tlsConfig.BuildNameToCertificate()
+	server := &http.Server{
+		Addr:      ":8080",
+		TLSConfig: tlsConfig,
+	}
+	log.Fatal(server.ListenAndServeTLS(cert, key))
 }
