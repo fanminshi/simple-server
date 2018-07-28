@@ -1,0 +1,11 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: simple-server-service
+spec:
+  selector:
+    app: simple-server
+  ports:
+  - name: https
+    protocol: TCP
+    port: 8080
