@@ -26,17 +26,21 @@ func main() {
 	if !ok {
 		log.Fatalln("env CERT not found")
 	}
-	clientCert, err := tls.LoadX509KeyPair(key, cert)
+	clientCert, err := tls.LoadX509KeyPair(cert, key)
 	if err != nil {
-		log.Fatalln("unable to load cert")
+		log.Fatalf("unable to load cert: %v", err)
 	}
-	clientCACert, err := ioutil.ReadFile(TLS_CA_CERT_PATH)
+	cacert, ok := os.LookupEnv(TLS_CA_CERT_PATH)
+	if !ok {
+		log.Fatalln("env CA_CERT not found")
+	}
+	clientCACert, err := ioutil.ReadFile(cacert)
 	if err != nil {
-		log.Fatal("Unable to open cert", err)
+		log.Fatalf("Unable to open cert: %v", err)
 	}
+
 	clientCertPool := x509.NewCertPool()
 	clientCertPool.AppendCertsFromPEM(clientCACert)
-
 	tlsConfig := &tls.Config{
 		Certificates: []tls.Certificate{clientCert},
 		RootCAs:      clientCertPool,
@@ -45,9 +49,7 @@ func main() {
 
 	client := &http.Client{
 		Transport: &http.Transport{
-			TLSClientConfig: &tls.Config{
-				RootCAs: clientCertPool,
-			},
+			TLSClientConfig: tlsConfig,
 		},
 	}
 
