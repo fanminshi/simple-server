@@ -1,12 +1,12 @@
 kind: Service
 apiVersion: v1
 metadata:
-  name: simple-server-service
+  name: simple-client-service
 spec:
   selector:
-    app: simple-server
+    app: simple-client
+  clusterIP: "None"
   ports:
   - name: https
     protocol: TCP
-    port: 443
-    targetPort: 443
+    port: 8080

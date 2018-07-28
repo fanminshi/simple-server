@@ -17,25 +17,34 @@ spec:
       containers:
       - name: simple-server
         image: quay.io/fanminshi/simple-server:latest
+        command:
+        - /root/server
         ports:
-        - containerPort: 443
+        - containerPort: 8080
         imagePullPolicy: Always
         volumeMounts:
         - name: tls
           mountPath: /etc/tls
           readOnly: true
+        - name: ca-volume
+          mountPath: /etc/ca
         env:
         - name: KEY
           value: /etc/tls/server.key
         - name: CERT
           value: /etc/tls/server.crt
+        - name: CA_CERT
+          value: /etc/ca/ca.pem
       volumes:
       - name: tls
         secret:
-          secretName: simple-server-tls
+          secretName: server-secret
           items:
           - key: tls.key
             path: server.key
           - key: tls.crt
             path: server.crt
+      - name: ca-volume
+        configMap:
+          name: ca-cm
       

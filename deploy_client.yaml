@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: simple-client-deployment
+  labels:
+    app: simple-client
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: simple-client
+  template:
+    metadata:
+      labels:
+        app: simple-client
+    spec:
+      containers:
+      - name: simple-client
+        image: quay.io/fanminshi/simple-server:latest
+        command:
+        - /root/client
+        imagePullPolicy: Always
+        volumeMounts:
+        - name: tls
+          mountPath: /etc/tls
+          readOnly: true
+        - name: ca-volume
+          mountPath: /etc/ca
+        env:
+        - name: KEY
+          value: /etc/tls/client.key
+        - name: CERT
+          value: /etc/tls/client.crt
+        - name: CA_CERT
+          value: /etc/ca/ca.pem
+        - name: SVC
+          value: simple-server-service.default.svc.cluster.local
+      volumes:
+      - name: tls
+        secret:
+          secretName: client-secret
+          items:
+          - key: tls.key
+            path: client.key
+          - key: tls.crt
+            path: client.crt
+      - name: ca-volume
+        configMap:
+          name: ca-cm
+      
