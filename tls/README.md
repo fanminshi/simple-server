@@ -1,9 +1,13 @@
 # Generate TLS asset
 
-The first, create a self signed `server-key.pem` and `server.pem`:
+Generate a self signed CA `ca-key.pen` and `ca.pem`:
 
-`$ openssl req -x509 -nodes -days 730 -newkey rsa:2048 -keyout server-key.pem -out server.pem -config req.conf -extensions 'v3_req'`
+`cfssl gencert -initca ca-csr.json | cfssljson -bare ca -`
 
-Finally, create a TLS secret:
+Create a self signed `server-key.pem` and `server.pem`:
 
-`$ kubectl create secret tls simple-server-tls --key server-key.pem --cert server.pem`
+`$ cfssl gencert -ca=ca.pem -ca-key=ca-key.pem -config=ca-config.json -profile=server server.json | cfssljson -bare server`
+
+Create a self signed `client-key.pem` and `client.pem`:
+
+`$ cfssl gencert -ca=ca.pem -ca-key=ca-key.pem -config=ca-config.json -profile=client client.json | cfssljson -bare client`
