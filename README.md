@@ -12,16 +12,20 @@ The first, build and push image to a public registry:
 
 The second, before deploy the simpler server and simple client, we need to create the TLS asset for them:
 
-`$ kubectl create secret tls server-secret --key tls/server-key.pem --cert tls/server.pem`
-`$ kubectl create secret tls client-secret --key tls/client-key.pem --cert tls/client.pem`
-`$ kubectl create configmap ca-cm --from-file=tls/ca.pem`
+```sh
+$ kubectl create secret tls server-secret --key tls/server-key.pem --cert tls/server.pem
+$ kubectl create secret tls client-secret --key tls/client-key.pem --cert tls/client.pem
+$ kubectl create configmap ca-cm --from-file=tls/ca.pem
+```
 
 Next, deploy the simple server and simple client deployments and their corresponding services:
 
-`$ kubectl create -f server_service.yaml`
-`$ kubectl create -f deploy_server.yaml`
-`$ kubectl create -f client_service.yaml`
-`$ kubectl create -f deploy_client.yaml`
+```sh
+$ kubectl create -f server_service.yaml
+$ kubectl create -f deploy_server.yaml
+$ kubectl create -f client_service.yaml
+$ kubectl create -f deploy_client.yaml
+```
 
 Verify that the deployment and service are succeeded:
 
